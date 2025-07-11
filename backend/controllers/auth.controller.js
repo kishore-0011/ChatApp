@@ -17,7 +17,7 @@ export const signup = async (req,res) => {
             return res.status(400).json({message:"User already exists"});
         }
 
-        const salt = await bcryptjs.genSalt(10);//10 is the number of rounds
+        const salt = await bcryptjs.genSalt(10);
         const hashedPassword = await bcryptjs.hash(password,salt);
 
         const boyProfilePic =`https://avatar.iran.liara.run/public/boy?username=${username}`;
@@ -56,10 +56,11 @@ export const signup = async (req,res) => {
 export const login = async (req,res) => {
     try {
         const {username,password} = req.body;
-        const user = await User.findOne({username});
-        const isPasswordCorrect = await bcryptjs.compare(password,user?.password || "");
+        const user = await User.findOne({ username });
+        const isPasswordCorrect = await bcryptjs.compare(password, user?.password || "");
+        
         if(!user || !isPasswordCorrect){
-            return res.status(400).json({message:"Invalid Credentials"});
+            return res.status(400).json({error:"Invalid Credentials"});
         }
 
         generateTokenAndSetCookie(user._id,res);
@@ -73,7 +74,7 @@ export const login = async (req,res) => {
 
      } catch (error) {
         console.log("Error in login controller",error.message);
-        res.status(500).json({error:"Internal Server Error"});
+        res.status(500).json({message:"Internal Server Error"});
      }
     console.log("Loginuser");
 };
